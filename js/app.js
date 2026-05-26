@@ -297,10 +297,6 @@ fileSelectBtn.addEventListener('click', () => {
   audioFileInput.click();
 });
 
-dropZone.addEventListener('click', () => {
-  audioFileInput.click();
-});
-
 audioFileInput.addEventListener('change', (e) => {
   addLocalTracks(e.target.files);
   audioFileInput.value = '';
