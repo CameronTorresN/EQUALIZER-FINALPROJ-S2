@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EQUALIZXR</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Main container for the studio / pedal page -->
+  <div class="studio-shell">
+    <!-- Pedal body wrapper -->
+    <div class="pedal-frame">
+      <!-- Decorative screw heads on the pedal corners -->
+      <div class="screw screw-tl"></div>
+      <div class="screw screw-tr"></div>
+      <div class="screw screw-bl"></div>
+      <div class="screw screw-br"></div>
+
+      <!-- Header branding on the pedal face -->
+      <header class="pedal-header">
+        <div class="brand-block">
+          <span class="model-label">EQUALIZXR-13</span>
+        </div>
+      </header>
+
+      <!-- Equalizer slider section -->
+      <section class="eq-grid" aria-label="Bass equalizer controls">
+        <!-- Each band uses a slider input with a frequency label -->
+        <div class="band" data-band="50">
+          <div class="freq-label">50</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-index="0" data-type="band" />
+          </div>
+          <div class="band-tag">Bass</div>
+        </div>
+
+        <div class="band" data-band="120">
+          <div class="freq-label">120</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-index="1" data-type="band" />
+          </div>
+          <div class="band-tag">Bass</div>
+        </div>
+
+        <div class="band" data-band="400">
+          <div class="freq-label">400</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-index="2" data-type="band" />
+          </div>
+          <div class="band-tag">Mid</div>
+        </div>
+
+        <div class="band" data-band="500">
+          <div class="freq-label">500</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-index="3" data-type="band" />
+          </div>
+          <div class="band-tag">Mid</div>
+        </div>
+
+        <div class="band" data-band="800">
+          <div class="freq-label">800</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-index="4" data-type="band" />
+          </div>
+          <div class="band-tag">Mid</div>
+        </div>
+
+        <div class="band" data-band="4.5k">
+          <div class="freq-label">4.5k</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-index="5" data-type="band" />
+          </div>
+          <div class="band-tag">Highs</div>
+        </div>
+
+        <div class="band" data-band="10k">
+          <div class="freq-label">10k</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-index="6" data-type="band" />
+          </div>
+          <div class="band-tag">Treble</div>
+        </div>
+
+        <div class="band level-band" data-band="Level">
+          <div class="freq-label">Level</div>
+          <div class="slider-wrap">
+            <span class="slider-value" aria-live="polite">0 dB</span>
+            <input type="range" min="-15" max="15" step="0.1" value="0" data-type="level" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Player panel inside the pedal frame -->
+      <aside class="player-panel">
+        <div class="track-panel">
+          <div id="albumArt" class="album-art"></div>
+          <div class="track-copy">
+            <div class="track-title" id="trackTitle">Upload a song</div>
+            <div class="track-artist" id="trackArtist">Local file</div>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <button id="playBtn" class="met-button" type="button">▶</button>
+          <button id="pauseBtn" class="met-button" type="button">❚❚</button>
+          <button id="restartBtn" class="met-button" type="button">↺</button>
+        </div>
+
+        <div class="seek-shell">
+          <input id="seekBar" type="range" min="0" max="100" step="0.1" value="0" aria-label="Seek" />
+          <div class="time-row">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+        </div>
+
+        <!-- File selector / drop zone for choosing a local song -->
+        <div id="dropZone" class="drop-zone">
+          <p>Drag and Drop the song you want to equalize</p>
+          <button id="fileSelectBtn" class="browse-btn" type="button">Browse song</button>
+          <input id="audioFileInput" type="file" accept="audio/*" hidden />
+        </div>
+      </aside>
+
+      <div class="footswitch-panel">
+        <button id="bypassBtn" class="foot-switch" type="button" aria-pressed="true">
+          <span class="led active"></span>
+          <span class="switch-label">EQ ACTIVE</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio element used by the Web Audio API source node -->
+  <audio id="player" crossorigin="anonymous"></audio>
+  <script src="js/app.js"></script>
+</body>
+</html>

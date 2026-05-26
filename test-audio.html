@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio Test</title>
+</head>
+<body>
+  <button id="testBtn">Test Audio Context</button>
+  <p id="status">Ready</p>
+  <audio id="testAudio" crossorigin="anonymous"></audio>
+
+  <script>
+    const testBtn = document.getElementById('testBtn');
+    const statusEl = document.getElementById('status');
+    const audio = document.getElementById('testAudio');
+
+    testBtn.addEventListener('click', async () => {
+      try {
+        // Create context
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        statusEl.textContent = `AudioContext state: ${ctx.state}`;
+
+        if (ctx.state === 'suspended') {
+          await ctx.resume();
+          statusEl.textContent += ` → Resumed`;
+        }
+
+        // Load test audio
+        audio.src = 'https://archive.org/download/testmp3testfile/mpthreetest.mp3';
+        audio.crossOrigin = 'anonymous';
+        
+        // Create source
+        const source = ctx.createMediaElementSource(audio);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 2048;
+        
+        source.connect(analyser);
+        analyser.connect(ctx.destination);
+        
+        statusEl.textContent += ` | Source connected`;
+
+        // Try to play
+        await audio.play();
+        statusEl.textContent += ` | Audio playing`;
+
+        // Check data
+        setTimeout(() => {
+          const data = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(data);
+          const sum = data.reduce((a, b) => a + b, 0);
+          statusEl.textContent += ` | Analyser data sum: ${sum}`;
+        }, 500);
+
+      } catch (err) {
+        statusEl.textContent = `ERROR: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
