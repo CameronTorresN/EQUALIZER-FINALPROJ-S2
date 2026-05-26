@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EQUALIZXR</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="assets/favicon.svg" />
 </head>
 <body>
   <!-- Main container for the studio / pedal page -->
@@ -24,8 +25,11 @@
         </div>
       </header>
 
-      <!-- Equalizer slider section -->
-      <section class="eq-grid" aria-label="Bass equalizer controls">
+      <div class="main-content">
+        <!-- Left section: EQ and Visualizer -->
+        <div class="eq-section">
+          <!-- Equalizer slider section -->
+          <section class="eq-grid" aria-label="Bass equalizer controls">
         <!-- Each band uses a slider input with a frequency label -->
         <div class="band" data-band="50">
           <div class="freq-label">50</div>
@@ -99,11 +103,15 @@
         </div>
       </section>
 
-      <!-- Player panel inside the pedal frame -->
-      <aside class="player-panel">
+      <!-- Frequency visualizer below the knobs -->
+      <div id="visualizer-container" class="visualizer-container"></div>
+    </div>
+
+    <!-- Right section: Player panel -->
+    <!-- Player panel inside the pedal frame -->
+    <aside class="player-panel">
         <div class="track-panel">
-          <div id="albumArt" class="album-art"></div>
-          <div class="track-copy">
+          <div class="track-info-compact">
             <div class="track-title" id="trackTitle">Upload a song</div>
             <div class="track-artist" id="trackArtist">Local file</div>
           </div>
@@ -130,18 +138,21 @@
           <input id="audioFileInput" type="file" accept="audio/*" hidden />
         </div>
       </aside>
+    </div>
 
-      <div class="footswitch-panel">
-        <button id="bypassBtn" class="foot-switch" type="button" aria-pressed="true">
-          <span class="led active"></span>
-          <span class="switch-label">EQ ACTIVE</span>
-        </button>
-      </div>
+    <div class="footswitch-panel">
+      <button id="bypassBtn" class="foot-switch" type="button" aria-pressed="true">
+        <span class="led active"></span>
+        <span class="switch-label">EQ ACTIVE</span>
+      </button>
     </div>
   </div>
+</div>
 
   <!-- Audio element used by the Web Audio API source node -->
   <audio id="player" crossorigin="anonymous"></audio>
+  <script src="p5/p5.min.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/visualizer.js"></script>
 </body>
 </html>

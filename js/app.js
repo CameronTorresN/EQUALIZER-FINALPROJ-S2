@@ -36,7 +36,7 @@ function initAudioContext() {
   }
 
   analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 2048;
+  analyser.fftSize =512;
   analyser.smoothingTimeConstant = 0.85;
 
   gainNode = audioCtx.createGain();
@@ -313,6 +313,49 @@ audioFileInput.addEventListener('change', (e) => {
 });
 
 window.addEventListener('load', () => {
-  setTrackMetadata(null);
+  // Try to load a bundled "initial" song so users have something to start with.
+  // If the file isn't present, fall back to the default upload prompt.
   updateAllSliders();
+
+  const defaultTrack = {
+    title: 'Bad Guy',
+    artist: 'Billie Eilish',
+    src: 'assets/initial.mp3',
+    art: ['#6f6f6f', '#1f1e1c'],
+  };
+
+  let defaultLoaded = false;
+
+  const handleDefaultCanPlay = () => {
+    defaultLoaded = true;
+    loadTrack(defaultTrack, false);
+    player.removeEventListener('canplay', handleDefaultCanPlay);
+    player.removeEventListener('error', handleDefaultError);
+  };
+
+  const handleDefaultError = () => {
+    // No bundled initial song found — keep the UI in the empty/upload state.
+    setTrackMetadata(null);
+    player.removeEventListener('canplay', handleDefaultCanPlay);
+    player.removeEventListener('error', handleDefaultError);
+  };
+
+  // Probe the expected default location. Browsers will fire either canplay or error.
+  try {
+    player.src = defaultTrack.src;
+    player.crossOrigin = 'anonymous';
+    player.load();
+    player.addEventListener('canplay', handleDefaultCanPlay, { once: true });
+    player.addEventListener('error', handleDefaultError, { once: true });
+
+    // Safety fallback: if neither event fires within a short time, revert UI.
+    setTimeout(() => {
+      if (!defaultLoaded) {
+        setTrackMetadata(null);
+        player.removeAttribute('src');
+      }
+    }, 800);
+  } catch (e) {
+    setTrackMetadata(null);
+  }
 });
