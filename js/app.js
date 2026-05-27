@@ -1,6 +1,48 @@
 // Frequencies used by each of the 7 EQ bands.
 const bandFrequencies = [50, 120, 400, 500, 800, 4500, 10000];
 
+const presetDefinitions = {
+  'flat-neutral': {
+    gains: [0, 0, 0, 0, 0, 0, 0],
+  },
+  'pop': {
+    gains: [4, 3, -1, -1, 1, 4, 5],
+  },
+  'hiphop-rap': {
+    gains: [8, 6, -2, -3, -1, 3, 4],
+  },
+  'edm-electronic': {
+    gains: [7, 5, -4, -4, -2, 5, 6],
+  },
+  'rock': {
+    gains: [3, 4, 1, 0, 2, 4, 2],
+  },
+  'indie-alternative': {
+    gains: [2, 2, 1, 1, 2, 3, 2],
+  },
+  'classical-orchestra': {
+    gains: [1, 0, 1, 2, 2, 3, 4],
+  },
+  'jazz': {
+    gains: [2, 3, 2, 2, 1, 2, 1],
+  },
+  'acoustic': {
+    gains: [0, 1, 2, 2, 3, 2, 2],
+  },
+  'lofi': {
+    gains: [4, 3, 2, 1, -1, -2, -3],
+  },
+  'vocal-boost-podcast': {
+    gains: [-4, -2, 1, 2, 4, 5, 2],
+  },
+  'bass-boost': {
+    gains: [10, 7, -2, -3, -2, 0, 0],
+  },
+  'treble-boost': {
+    gains: [-2, -1, 0, 0, 2, 6, 8],
+  },
+};
+
 // DOM references for all controls and display elements.
 const player = document.getElementById('player');
 const playBtn = document.getElementById('playBtn');
@@ -126,17 +168,44 @@ function updateAllSliders() {
   });
 }
 
+function setActivePresetButton(presetKey) {
+  const presetButtons = document.querySelectorAll('.preset-button');
+  presetButtons.forEach((button) => {
+    button.classList.toggle('active', button.dataset.preset === presetKey);
+  });
+}
+
+function applyPreset(presetKey) {
+  const preset = presetDefinitions[presetKey];
+  if (!preset) return;
+
+  sliders.forEach((slider) => {
+    if (slider.dataset.type !== 'band') return;
+    const index = Number(slider.dataset.index);
+    const targetGain = preset.gains[index];
+    slider.value = targetGain;
+    updateBandGain(index, targetGain);
+    updateSliderTooltip(slider);
+  });
+
+  setActivePresetButton(presetKey);
+}
+
 function setTrackMetadata(track) {
   if (!track) {
     trackTitle.textContent = 'Upload a song';
     trackArtist.textContent = 'Local file';
-    albumArt.style.background = 'radial-gradient(circle at 35% 30%, #6f6f6f 0%, #1f1e1c 60%)';
+    if (albumArt) {
+      albumArt.style.background = 'radial-gradient(circle at 35% 30%, #6f6f6f 0%, #1f1e1c 60%)';
+    }
     return;
   }
 
   trackTitle.textContent = track.title;
   trackArtist.textContent = track.artist;
-  albumArt.style.background = `radial-gradient(circle at 35% 30%, ${track.art[0]} 0%, ${track.art[1]} 60%)`;
+  if (albumArt) {
+    albumArt.style.background = `radial-gradient(circle at 35% 30%, ${track.art[0]} 0%, ${track.art[1]} 60%)`;
+  }
 }
 
 function loadTrack(track, autoplay = false) {
@@ -228,10 +297,19 @@ sliders.forEach((slider) => {
     updateSliderTooltip(target);
     if (target.dataset.type === 'band') {
       updateBandGain(Number(target.dataset.index), parseFloat(target.value));
+      setActivePresetButton('');
     }
     if (target.dataset.type === 'level') {
       updateMasterGain(target.value);
     }
+  });
+});
+
+const presetButtons = document.querySelectorAll('.preset-button');
+presetButtons.forEach((button) => {
+  button.addEventListener('click', (event) => {
+    const presetKey = event.currentTarget.dataset.preset;
+    applyPreset(presetKey);
   });
 });
 
